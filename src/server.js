@@ -1,7 +1,6 @@
 require('dotenv').config();
 const http = require('http');
-const requestListener = require('../routes');
-const routeExecutor = require('./routes');
+const routeExecutor = require('./routeExecutor');
 
 const { initiateTables } = require('./config/db');
 initiateTables();
@@ -14,3 +13,5 @@ const server = http.createServer((req, res) => routeExecutor(req, res));
 server.listen(port, host, () => {
     console.log(`server is running on http://${host}:${port}`);
 });
+
+module.exports = server;

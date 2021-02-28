@@ -16,6 +16,4 @@ const getPostData = (req) => {
     })
 }
 
-module.exports = {
-    getPostData
-}
+module.exports = getPostData;
