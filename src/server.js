@@ -6,7 +6,7 @@ const { initiateTables } = require('./config/db');
 initiateTables();
 
 const host = 'localhost';
-const port = process.env.PORT || 8080;
+const port = process.env.PORT;
 
 const server = http.createServer((req, res) => routeExecutor(req, res));
 

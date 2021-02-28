@@ -1,12 +1,15 @@
 const { createUsername, loginUser } = require('./controllers/users');
 
 const routes = {
-    '/': (req, res) => {
-        res.writeHead(200);
-        return res.end(JSON.stringify({
-            status: 200,
-            message: 'Welcome to the chat bot',
-        }));
+    '/': {
+        method: 'GET',
+        execute: (req, res) => {
+            res.writeHead(200);
+            return res.end(JSON.stringify({
+                status: 200,
+                message: 'Welcome to the chat bot',
+            }));
+        } 
     },
     '/create/user': {
         method: 'POST',
