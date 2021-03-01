@@ -1,5 +1,5 @@
 require('dotenv').config();
 
 module.exports = {
-    connectionString: process.env.DATABASE_URL
+    connectionString: process.env.DB_URL
 };

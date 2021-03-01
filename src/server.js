@@ -5,7 +5,7 @@ const routeExecutor = require('./routeExecutor');
 const { initiateTables } = require('./config/db');
 initiateTables();
 
-const host = 'localhost';
+const host = process.env.HOST;
 const port = process.env.PORT;
 
 const server = http.createServer((req, res) => routeExecutor(req, res));
