@@ -41,9 +41,9 @@ const loginUser = async (req, res) => {
 
     try {
         const body = await getPostData(req);
-        const { username, password } = JSON.parse(body);
+        const { firstname, lastname, password } = JSON.parse(body);
 
-        if (!username || !password) {
+        if (!firstname || !lastname || !password) {
             res.writeHead(400)
             return res.end()
         }
