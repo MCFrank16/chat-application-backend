@@ -10,9 +10,9 @@ const createUsername = async (req, res) => {
     try {
 
         const body = await getPostData(req);
-        const { username, password } = JSON.parse(body);
+        const { firstname, lastname, username, password } = JSON.parse(body);
 
-        if (!username || !password) {
+        if (!firstname || !lastname || !username || !password) {
             res.writeHead(400)
             return res.end()
         }
@@ -21,7 +21,7 @@ const createUsername = async (req, res) => {
         const createdAt = moment().format('h:mm a');
         const hashedPassword = hashPassword(password);
 
-        await DB.query(createUser(id, username, hashedPassword, createdAt));
+        await DB.query(createUser(id, username, firstname, lastname, hashedPassword, createdAt));
 
         res.writeHead(201);
         return res.end(JSON.stringify({
@@ -53,7 +53,7 @@ const loginUser = async (req, res) => {
 
         if (!verifyPassword(user.password, password)) {
             res.writeHead(401);
-            return res.end('check the password')
+            return res.end()
         }
 
         res.writeHead(200);
