@@ -52,8 +52,8 @@ const loginUser = async (req, res) => {
         }
     
         const user = await (await DB.query(getUser(username))).rows[0];
-
-        if (!verifyPassword(user.password, password)) {
+    
+        if (user === undefined || !verifyPassword(user.password, password)) {
             res.writeHead(401);
             return res.end()
         }
