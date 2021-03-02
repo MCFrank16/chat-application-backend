@@ -14,7 +14,7 @@ module.exports = {
        VALUES('${id}', '${username}', '${firstname}', '${lastname}', '${password}', '${createdAt}')
     `,
     getUser: (username) => `
-       SELECT username, password FROM users WHERE username = '${username}'
+       SELECT username, password, firstname, lastname FROM users WHERE username = '${username}'
     `,
 
     // conversation

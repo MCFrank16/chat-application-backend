@@ -22,17 +22,20 @@ const createUsername = async (req, res) => {
         const hashedPassword = hashPassword(password);
 
         await DB.query(createUser(id, username, firstname, lastname, hashedPassword, createdAt));
+        const token = await signToken({ username, firstname, lastname }, '24h');
 
         res.writeHead(201);
         return res.end(JSON.stringify({
             status: 201,
             message: 'user created',
+            token
         }))
+
     } catch (error) {
-        res.writeHead(400);
+        res.writeHead(500);
         return res.end(JSON.stringify({
-            status: 400,
-            message: error.detail
+            status: 500,
+            message: 'Internal server error'
         }))
     }
 }
@@ -41,32 +44,34 @@ const loginUser = async (req, res) => {
 
     try {
         const body = await getPostData(req);
-        const { firstname, lastname, password } = JSON.parse(body);
+        const { username, password } = JSON.parse(body);
 
-        if (!firstname || !lastname || !password) {
+        if (!username || !password) {
             res.writeHead(400)
             return res.end()
         }
     
         const user = await (await DB.query(getUser(username))).rows[0];
-        const token = await signToken({ user: user.username }, '24h');
 
         if (!verifyPassword(user.password, password)) {
             res.writeHead(401);
             return res.end()
         }
 
+        delete user.password
+        const token = await signToken({ user }, '24h');
+
         res.writeHead(200);
         return res.end(JSON.stringify({
             status: 200,
-            token: token,
+            token,
         }));
     
     } catch (error) {
-        res.writeHead(401)
+        res.writeHead(500)
         return res.end(JSON.stringify({
-            status: 401,
-            message: 'Username do not exist'
+            status: 500,
+            message: 'Internal server error'
         }))
     }
 }

@@ -1,11 +1,10 @@
 const routes = require('./routes');
 
 const routeExecutor = (req, res) => {
-    res.setHeader(
-        "Content-Type", "application/json",
-        "Access-Control-Allow-Origin", "*",
-        "Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH",
-    );
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS GET POST PUT PATCH DELETE');
+    
     if (routes[req.url] && req.method === routes[req.url].method) {
         return (routes[req.url].execute)(req, res)
     } else {

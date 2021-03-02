@@ -9,7 +9,9 @@ initiateTables();
 const host = process.env.HOST;
 const port = process.env.PORT;
 
-const server = http.createServer((req, res) => routeExecutor(req, res));
+const server = http.createServer((req, res) => {
+    return routeExecutor(req, res)
+});
 const io = socketio(server);
 
 server.listen(port, host, () => {
