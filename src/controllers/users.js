@@ -14,7 +14,10 @@ const createUsername = async (req, res) => {
 
         if (!firstname || !lastname || !username || !password) {
             res.writeHead(400)
-            return res.end()
+            return res.end(JSON.stringify({
+                status: 400,
+                message: 'Empty body is not allowed'
+            }))
         }
 
         const id = uuidv4();
@@ -48,14 +51,20 @@ const loginUser = async (req, res) => {
     
         if (!username || !password) {
             res.writeHead(400)
-            return res.end()
+            return res.end(JSON.stringify({
+                status: 400,
+                message: 'Empty body is not allowed'
+            }))
         }
     
         const user = await (await DB.query(getUser(username))).rows[0];
     
         if (user === undefined || !verifyPassword(user.password, password)) {
             res.writeHead(401);
-            return res.end()
+            return res.end(JSON.stringify({
+                status: 401,
+                message: 'Unexisting data'
+            }))
         }
 
         delete user.password
