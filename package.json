@@ -7,7 +7,6 @@
     "dev": "nodemon --exec node src/server.js",
     "test": "NODE_ENV=test mocha --timeout 10000 tests/*.js --exit",
     "start": "NODE_ENV=production node src/server.js",
-    "check": "nodemon --exec node check.js"
   },
   "author": "Frank Mutabazi",
   "license": "ISC",
