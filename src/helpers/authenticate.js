@@ -2,13 +2,13 @@ require('dotenv').config();
 const crypto = require('crypto');
 const { verify, sign } = require('jsonwebtoken');
 
-const hashPassword = (data) => {
+const encrypt = (data) => {
     return crypto.createHmac('sha256', process.env.PRIVATEKEY)
        .update(data)
        .digest('hex');
 }
 
-const verifyPassword = (hashed, plain) => hashed === hashPassword(plain);
+const verifyPassword = (hashed, plain) => hashed === encrypt(plain);
 
 const signToken = (payload, expiresIn) => {
     return sign(payload, process.env.PRIVATEKEY, { expiresIn });
@@ -16,15 +16,14 @@ const signToken = (payload, expiresIn) => {
 
 const verifyToken = (token) => {
     try {
-        verify(token, process.env.PUBLICKEY, { algorithms: ['RS256']});
-        return true;
+        return verify(token, process.env.PRIVATEKEY);
     } catch (err) {
         return false;
     }
 }
 
 module.exports = {
-    hashPassword,
+    encrypt,
     verifyPassword,
     signToken,
     verifyToken

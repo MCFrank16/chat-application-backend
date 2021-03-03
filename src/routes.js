@@ -1,4 +1,5 @@
-const { createUsername, loginUser } = require('./controllers/users');
+const { createUsername, loginUser, logout, onlineUsers } = require('./controllers/users');
+const { createMessage } = require('./controllers/messages');
 
 const routes = {
     '/': {
@@ -18,6 +19,18 @@ const routes = {
     '/login/user': {
         method: 'POST',
         execute: (req, res) => loginUser(req, res)
+    },
+    '/logout': {
+        method: 'GET',
+        execute: (req, res) => logout(req, res)
+    },
+    '/online/users': {
+        method: 'GET',
+        execute: (req, res) => onlineUsers(req, res)
+    },
+    '/create/message': {
+        method: 'POST',
+        execute: (req, res) => createMessage(req, res)
     }
 }
 
