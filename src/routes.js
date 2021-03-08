@@ -1,5 +1,6 @@
-const { createUsername, loginUser, logout, onlineUsers } = require('./controllers/users');
+const { createUsername, loginUser, logout, onlineUsers, getDetails } = require('./controllers/users');
 const { createMessage } = require('./controllers/messages');
+const { createAconversation, getConversations } = require('./controllers/conversations');
 
 const routes = {
     '/': {
@@ -31,7 +32,25 @@ const routes = {
     '/create/message': {
         method: 'POST',
         execute: (req, res) => createMessage(req, res)
+    },
+    '/create/conversation': {
+        method: 'POST',
+        execute: (req, res) => createAconversation(req, res)
+    },
+    '/all/conversations': {
+        method: 'GET',
+        execute: (req, res) => getConversations(req, res)
     }
 }
 
-module.exports = routes;
+const paramsRoute = {
+    '/get/details': {
+        method: 'GET',
+        execute: (req, res) => getDetails(req, res)
+    }
+}
+
+module.exports = {
+    routes,
+    paramsRoute,
+};
