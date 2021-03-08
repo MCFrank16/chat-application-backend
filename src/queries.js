@@ -18,31 +18,35 @@ module.exports = {
        SELECT id, username, password, firstname, lastname, status FROM users WHERE username = '${username}'
     `,
 
-    getAllOnlineUsers: () => `
-       SELECT firstname, lastname FROM users WHERE status = 'online'
+    getAllOnlineUsers: (id) => `
+       SELECT id, firstname, lastname, username FROM users WHERE NOT id = '${id}' AND status = 'online'
     `,
     changeStatus: (id, status) => `
        UPDATE users SET status = '${status}' WHERE id = '${id}'
+    `,
+    getUserDetails: (id) => `
+       SELECT firstname, lastname, username FROM users WHERE id = '${id}'
     `,
     // conversation
     createTableConversations: `
        CREATE TABLE IF NOT EXISTS conversations(
            convoID VARCHAR(250) NOT NULL,
-           participant VARCHAR[],
-           last_message VARCHAR(10000)
+           first_participant VARCHAR(250),
+           second_participant VARCHAR(250),
+           last_message VARCHAR(10000),
+           createdAt VARCHAR(100),
            PRIMARY KEY (convoID)
        )
     `,
-
-    createConversation: (convoID, participants, lastMessage) => `
-        INSERT INTO conversations (convoID, participant, last_message)
-        VALUES ('${convoID}', '${participants}', '${lastMessage}')
+    createConversation: (convoID, first_participant, second_participant, lastMessage, createdAt) => `
+        INSERT INTO conversations (convoID, first_participant, second_participant, last_message, createdAt)
+        VALUES ('${convoID}', '${first_participant}', '${second_participant}', '${lastMessage}', '${createdAt}')
     `,
     getAllConversations: (userID) => `
-        SELECT * FROM conversations WHERE participants[1], participants[2] = '${userID}'
+        SELECT * FROM conversations WHERE first_participant = '${userID}' OR second_participant = '${userID}'
     `,
-    getConversation: (convoID) => `
-        SELECT convoID FROM conversations WHERE convoID = '${convoID}'
+    getConversation: (first_participant, second_participant) => `
+        SELECT convoID FROM conversations WHERE first_participant = '${first_participant}' AND second_participant = '${second_participant}'
     `,
     createTableMessages: `
        CREATE TABLE IF NOT EXISTS messages(

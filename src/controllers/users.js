@@ -1,8 +1,15 @@
+const url = require('url');
+
 const { v4: uuidv4 } = require('uuid');
 const moment = require('moment');
 
 const { DB } = require('../config/db');
-const { createUser, getUser, changeStatus, getAllOnlineUsers } = require('../queries');
+const { createUser, 
+    getUser, 
+    changeStatus, 
+    getAllOnlineUsers,
+    getUserDetails
+} = require('../queries');
 const getPostData = require('../helpers/getBodyData');
 const { encrypt, signToken, verifyPassword, verifyToken } = require('../helpers/authenticate');
 
@@ -109,7 +116,9 @@ const logout = async (req, res) => {
 
 const onlineUsers = async (req, res) => {
     try {
-        const { rowCount, rows } = await DB.query(getAllOnlineUsers());
+        const token = req.headers['authorization'].split(' ')[1];
+        const { id } = verifyToken(token);
+        const { rowCount, rows } = await DB.query(getAllOnlineUsers(id));
         res.writeHead(200);
         return res.end(JSON.stringify({
             rowCount,
@@ -124,9 +133,36 @@ const onlineUsers = async (req, res) => {
     }
 }
 
+const getDetails = async (req, res) => {
+    try {
+        const userID = url.parse(req.url, true).query;
+        console.log(userID);
+    
+        if (!userID){
+            res.writeHead(400);
+            res.end(JSON.stringify({
+                status: 400,
+                message: 'provide the userID'
+            }));
+        }
+
+        const {rows} = await DB.query(getUserDetails(userID));
+        console.log(rows);
+
+    } catch (error) {
+        console.log(error)
+        res.writeHead(500)
+        return res.end(JSON.stringify({
+            status: 500,
+            message: 'Internal server error'
+        }));
+    }
+}
+
 module.exports = {
     createUsername,
     loginUser,
     logout,
-    onlineUsers
+    onlineUsers,
+    getDetails
 }
