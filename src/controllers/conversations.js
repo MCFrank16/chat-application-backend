@@ -8,19 +8,16 @@ const getPostData = require('../helpers/getBodyData');
 
 const getConversations = async (req, res) => {
     try {
-        const { user: { id: userID } } = verifyToken(req.headers['authorization'].split(' ')[1]);
-        if (!userID){
+        const { user: { username } } = verifyToken(req.headers['authorization'].split(' ')[1]);
+        if (!username){
             res.writeHead(400);
-            res.end(JSON.stringify({
+            return res.end(JSON.stringify({
                 status: 400,
                 message: 'provide the userID'
             }));
         }
-        const { rows } = await (await DB.query(getUserDetails(userID)));
-        
-        const name = `${rows[0].firstname} ${rows[0].lastname}`
 
-        const conversations = await (await DB.query(getAllConversations(name))).rows;
+        const conversations = await (await DB.query(getAllConversations(username))).rows;
 
         res.writeHead(200);
         return res.end(JSON.stringify({
@@ -29,7 +26,6 @@ const getConversations = async (req, res) => {
         }));
 
     } catch (error) {
-        console.log(error)
         res.writeHead(500);
         return res.end(JSON.stringify({ status: 500, message: 'Internal Server Error' }));
     }
@@ -39,28 +35,23 @@ const getConversations = async (req, res) => {
 const createAconversation = async (req, res) => {
     try {
         const token = req.headers['authorization'].split(' ')[1];
-        const  { id } = verifyToken(token);
+        const { user: { username } } = verifyToken(token);
+
         const body = await getPostData(req);
-        const { secondID } = JSON.parse(body);
+        const { secondName } = JSON.parse(body);
 
         const createdAt = moment().format('ll');
 
-        const first_participant= await (await DB.query(getUserDetails(id))).rows[0];
-        const second_participant = await (await DB.query(getUserDetails(secondID))).rows[0];
-        
-        const participant_one = `${first_participant.firstname} ${first_participant.lastname}`;
-        const participant_two = `${second_participant.firstname} ${second_participant.lastname}`;
-
-        const { rows } = await DB.query(getConversation(participant_one, participant_two));
+        const { rows } = await DB.query(getConversation(username, secondName));
         
         if (rows.length > 0) {
             res.writeHead(200);
-            res.end(JSON.stringify({ 
+            return res.end(JSON.stringify({ 
                 status: 200,
                 message: 'Conversation already created'
             }))
         } else {
-            await DB.query(createConversation(uuidv4(), participant_one, participant_two, 'No message yet', createdAt));
+            await DB.query(createConversation(uuidv4(), username, secondName, 'No message yet', createdAt));
             res.writeHead(201);
             return res.end(JSON.stringify({
                 status: 201,
@@ -68,8 +59,9 @@ const createAconversation = async (req, res) => {
             }));
         }
     } catch (error) {
+        console.log(error)
         res.writeHead(500);
-        res.end(JSON.stringify({ status: 500, message: 'Internal Server Error' }));
+        return res.end(JSON.stringify({ status: 500, message: 'Internal Server Error' }));
     }
 }
 

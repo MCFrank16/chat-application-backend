@@ -117,7 +117,7 @@ const logout = async (req, res) => {
 const onlineUsers = async (req, res) => {
     try {
         const token = req.headers['authorization'].split(' ')[1];
-        const { id } = verifyToken(token);
+        const { user: { id } } = verifyToken(token);
         const { rowCount, rows } = await DB.query(getAllOnlineUsers(id));
         res.writeHead(200);
         return res.end(JSON.stringify({
@@ -135,10 +135,9 @@ const onlineUsers = async (req, res) => {
 
 const getDetails = async (req, res) => {
     try {
-        const userID = url.parse(req.url, true).query;
-        console.log(userID);
-    
-        if (!userID){
+        const { username } = url.parse(req.url, true).query;
+
+        if (!username){
             res.writeHead(400);
             res.end(JSON.stringify({
                 status: 400,
@@ -146,11 +145,23 @@ const getDetails = async (req, res) => {
             }));
         }
 
-        const {rows} = await DB.query(getUserDetails(userID));
-        console.log(rows);
+        const { rows } = await DB.query(getUser(username));
+        delete rows[0].password;
+        
+        if (rows.length > 0){
+            res.writeHead(200);
+            return res.end(JSON.stringify({
+                status: 200,
+                user: rows[0]
+            }))
+        }
+        res.writeHead(404);
+        return res.end(JSON.stringify({
+            status: 404,
+            message: 'user not found'
+        }))
 
     } catch (error) {
-        console.log(error)
         res.writeHead(500)
         return res.end(JSON.stringify({
             status: 500,
