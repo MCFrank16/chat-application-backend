@@ -25,7 +25,7 @@ module.exports = {
        UPDATE users SET status = '${status}' WHERE id = '${id}'
     `,
     getUserDetails: (id) => `
-       SELECT firstname, lastname, username FROM users WHERE id = '${id}'
+       SELECT firstname, lastname, username, status FROM users WHERE id = '${id}'
     `,
     // conversation
     createTableConversations: `
@@ -42,8 +42,8 @@ module.exports = {
         INSERT INTO conversations (convoID, first_participant, second_participant, last_message, createdAt)
         VALUES ('${convoID}', '${first_participant}', '${second_participant}', '${lastMessage}', '${createdAt}')
     `,
-    getAllConversations: (userID) => `
-        SELECT * FROM conversations WHERE first_participant = '${userID}' OR second_participant = '${userID}'
+    getAllConversations: (name) => `
+        SELECT * FROM conversations WHERE first_participant = '${name}' OR second_participant = '${name}' ORDER BY convoid ASC
     `,
     getConversation: (first_participant, second_participant) => `
         SELECT convoID FROM conversations WHERE first_participant = '${first_participant}' AND second_participant = '${second_participant}'
